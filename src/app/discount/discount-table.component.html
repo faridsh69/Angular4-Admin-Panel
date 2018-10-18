@@ -1,0 +1,33 @@
+<div class="table-responsive">
+    <table class="table table-striped table-bordered  dataTable" role="grid">
+        <thead>
+            <th style="width:30px">ردیف</th>
+            <th>نام</th>
+            <th>کد تخفیف</th>
+            <th>نوع</th>
+            <th>مقدار</th>
+            <th>دفعات مصرف</th>
+            <th style="width:80px">عملیات</th>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of discounts" role="row" attr.data-index="{{discounts.indexOf(item)}}">
+            <td style="text-align:center">{{discounts.indexOf(item)+1}}</td>
+            <td>{{item.name}}</td>
+            <td style="font-family: arial">{{item.code}}</td>
+            <td>{{item.type == 'percent' ? 'درصد' : 'مبلغ'}}</td>
+            <td>{{item.value}}</td>
+            <td>{{item.count}}</td>
+            <td>
+                <a title="ویرایش" [routerLink]="['/discount/update', item.id]" (click)="onClick(item)">
+                    <i class="fa fa-edit"></i>  
+                </a>
+                <a title="تغییر وضعیت نمایش" (click)="changeStatus(item)">
+                    <input type='checkbox' [(ngModel)]="item.status" class='ios8-switch ios8-switch-sm'
+                    #status="ngModel" name="status"  id='checkbox-2'>
+                    <label for='checkbox-2'></label>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

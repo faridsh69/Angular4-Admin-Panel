@@ -1,0 +1,123 @@
+.confirm-account {
+  .modal {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    right: auto;
+    left: auto;
+    display: block;
+    z-index: 1;
+    background: transparent !important;
+
+    .modal-dialog {
+      @media (min-width: @screen-tablet){
+        width: 500px;
+      }
+      @media (min-width: @screen-desktop){
+        width: 600px;
+      }
+
+    }
+
+    .modal-body {
+      text-align: center;
+      h4 {
+        color: @light-blue;
+        text-align: center;
+      }
+      p {
+        font-size: 15px;
+        color: #666;
+      }
+      .fa {
+        font-size: 60px;
+        margin-bottom: 20px;
+        color: darken(@body-bg, 5%);
+      }
+      .btn {
+        margin-top: 20px;
+      }
+    }
+
+  }
+}
+
+.download-extension {
+  .last-part {
+    margin-top: 40px;
+    font-size: 16px;
+  }
+}
+.learn {
+  ul {
+    list-style: none;
+    .title {
+      font-size: 16px;
+      color: @light-blue;
+      margin: 15px auto;
+    }
+    p {
+      color: #555;
+    }
+    img {
+      margin: 7.5px auto;
+    }
+  }
+}
+
+.earn-withdrawal {
+  .modal {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    right: auto;
+    left: auto;
+    display: block;
+    z-index: 1;
+    background: transparent !important;
+
+    .modal-dialog {
+      @media (min-width: @screen-tablet){
+        width: 350px;
+      }
+      @media (min-width: @screen-desktop){
+        width: 400px;
+      }
+
+    }
+
+    .modal-body {
+      text-align: center;
+      h4 {
+        color: @light-blue;
+        text-align: center;
+        margin-bottom: 25px;
+        span.currency {
+          font-size: smaller;
+        }
+      }
+      .fa {
+        font-size: 60px;
+        margin-bottom: 20px;
+        color: darken(@body-bg, 5%);
+      }
+
+      .progress-group {
+        text-align: right;
+
+        @media (max-width: @screen-xs-max) {
+          font-size: 12px;
+        }
+
+        .progress-text {
+          font-weight: normal;
+        }
+        .progress-number {
+          float: left;
+        }
+      }
+
+    }
+
+  }
+}

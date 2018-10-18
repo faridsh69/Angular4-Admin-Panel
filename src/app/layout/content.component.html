@@ -1,0 +1,15 @@
+<section class="content-header">
+    <h1>
+        {{title}}
+        <small *ngIf="desc">{{desc}}</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a routerLink="/"><i class="fa fa-dashboard"></i> پنل مدیریت</a></li>
+        <li *ngFor="let item of breadcrumbs">
+            <a *ngIf="item.to" routerLink="{{item.to}}">
+                {{item.name}}
+            </a>
+            <span *ngIf="!item.to">{{item.name}}</span>
+        </li>
+    </ol>
+</section>

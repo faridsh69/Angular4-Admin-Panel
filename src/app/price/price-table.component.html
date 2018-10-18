@@ -1,0 +1,222 @@
+<simple-notifications [options]="options"></simple-notifications>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-solid">
+            <div class="box-body">
+                <a class="btn btn-success pull-right" (click)="savePrices()" > تایید و ذخیره</a>
+                <form class="form-inline"(ngSubmit)="onSubmitSearch()" #CategoryForm="ngForm">
+                    <div class="form-group"  style="margin-right: 30px;" >
+                        <label for="category">دسته بندی:</label>
+                        <select class="form-control" id="category" [(ngModel)]="categoryId"
+                            name="category" #category="ngModel">
+                            <option [ngValue]=null >همه دسته‌ها</option>
+                            <option *ngFor="let category of categories" [ngValue]="category.id">
+                                {{category.depthText+" "+ category.name}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-right: 10px;" >
+                        <label for="brand">برند:</label>
+                        <select class="form-control" id="brand" [(ngModel)]="brandId"
+                            name="brand" #brand="ngModel">
+                            <option [ngValue]=null >همه برندها</option>
+                            <option *ngFor="let brand of brands" [ngValue]="brand.id">
+                                {{brand.nameEn}}
+                            </option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-default">جست‌جو</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-solid">
+            <div class="box-body">
+                <div *ngIf="!prices" class="text-center">
+                    <div *ngIf="startingAlert">
+                        دسته بندی و برند مورد نظر را انتخاب نمایید.
+                    </div>
+                    <div *ngIf="!startingAlert">
+                        <i class="fa fa-refresh fa-spin m-r refresh"></i>
+                    </div>
+                </div>
+                <div *ngIf="prices && prices.length == 0" class="text-center">
+                    کالایی یافت نشد!
+                </div>
+                <div class="table-responsive" *ngIf="prices && prices.length > 0">
+                    <table class="table table-striped table-bordered  dataTable" role="grid">
+                        <thead>
+                            <th>کالا</th>
+                            <th title="این قیمت بصورت خط خورده در سایت نمایش داده می شود.">
+                                <a class="help-left" (click)="newChangePriceModal = true">
+                                    تغییر قیمت‌ها</a>
+                                قیمت <small>(تومان)</small>
+                            </th>
+                            <th title="قیمت نهایی ثبت شده در فاکتور">
+                                <a class="help-left" (click)="newDiscountModal = true">
+                                    ایجاد تخفیف</a>
+                                قیمت تخفیف‌دار
+                            </th>
+                            <th style="width:110px">موجودی</th>
+                            <th style="width:110px">بن اهدایی</th>
+                            <th style="width:110px">حداکثر بن مصرفی</th>
+                            <th style="width:140px">وضعیت</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of prices" role="row">
+                                <td style="text-align: right">{{item.productName }} 
+                                    <br>
+                                    <small *ngFor="let data of item.data"> {{data}} </small>
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" min="0" name="price-{{item.id}}"
+                                        [(ngModel)]="item.price">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" min="0" 
+                                        name="discountPrice-{{item.id}}" [(ngModel)]="item.discountPrice">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" 
+                                        name="inventory-{{item.id}}" [(ngModel)]="item.inventory">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" min="0" 
+                                        name="bon-{{item.id}}" [(ngModel)]="item.bon">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" min="0" 
+                                        name="bonUsed-{{item.id}}" [(ngModel)]="item.bonUsed">
+                                </td>
+                                <td style="max-width:130px">
+                                    <select style="width: 110px;" class="form-control" 
+                                        [(ngModel)]="item.status" name="status-{{item.id}}">
+                                        <option value="available">موجود</option>
+                                        <option value="unavailable">نا موجود</option>
+                                        <option value="soon">به زودی...</option>
+                                        <option value="stop_production">توقف تولید</option>
+                                        <option value="stop_import">توقف واردات</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- bulki change on price -->
+<div [ngClass]="{'modal':true, 'show': newChangePriceModal }" role="dialog">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+    <button type="button" class="close" (click)="newChangePriceModal = false">&times;</button>
+    <h5 class="modal-title"> تغییر قیمت‌ها </h5>
+</div>
+<form (ngSubmit)="onSubmitChangePrice()" #ChangePriceForm="ngForm">
+    <div class="modal-body">
+        <!-- type -->
+        <div [ngClass]="{'form-group':true, 'has-error': type.touched && type.invalid, 'has-success':type.touched && type.valid}" >
+            <label for="type">نوع تغییر</label>
+            <select class="form-control" id="type" [(ngModel)]="changePrice.type" name="type"
+             #type="ngModel">
+                <option value="amount">مبلغ ثابت</option>
+                <option value="percent">درصدی از قیمت</option>
+            </select>
+        </div>
+        <!-- value -->
+        <div [ngClass]="{'form-group':true, 'has-error': value.touched && value.invalid, 'has-success':value.touched && value.valid}" >
+            <label for="value">مقدار تغییر 
+                {{changePrice.type == 'percent' ? '(درصد)' : '(تومان)'}}
+            </label>
+            <input type="number" class="form-control" id="value" [(ngModel)]="changePrice.value"
+            name="value" #value="ngModel">
+            <span *ngIf="value.invalid && value.touched">            
+            </span>
+        </div>
+        <div class="form-group">
+            <input type="radio" id="increase" name="status" [value]=true [(ngModel)]="changePrice.status">
+            <label for="increase">افزایش</label>
+            <input type="radio" id="decrease" name="status" [value]=false [(ngModel)]="changePrice.status">
+            <label for="decrease">کاهش</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="form-group">
+            <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !DiscountForm.form.valid">
+                <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                اعمال تخفیف
+            </button>
+        </div>
+    </div>
+</form>
+</div>
+</div>
+</div>
+
+<!-- discount -->
+<div [ngClass]="{'modal':true, 'show': newDiscountModal }" role="dialog">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+    <button type="button" class="close" (click)="newDiscountModal = false">&times;</button>
+    <h5 class="modal-title"> اعمال تخفیف </h5>
+</div>
+<form (ngSubmit)="onSubmitDiscount()" #DiscountForm="ngForm">
+    <div class="modal-body">
+        <!-- type -->
+        <div [ngClass]="{'form-group':true, 'has-error': type.touched && type.invalid, 'has-success':type.touched && type.valid}" >
+            <label for="type">نوع تخفیف</label>
+            <select class="form-control" id="type" [(ngModel)]="discount.type" name="type"
+             #type="ngModel">
+                <option value="amount">مبلغ ثابت</option>
+                <option value="percent">درصدی از قیمت</option>
+            </select>
+        </div>
+        <!-- value -->
+        <div [ngClass]="{'form-group':true, 'has-error': value.touched && value.invalid, 'has-success':value.touched && value.valid}" >
+            <label for="value">مقدار تخفیف 
+                {{discount.type == 'percent' ? '(درصد)' : '(تومان)'}}
+            </label>
+            <input type="number" class="form-control" id="value" [(ngModel)]="discount.value"
+            name="value" #value="ngModel">
+            <span *ngIf="value.invalid && value.touched">            
+            </span>
+        </div>
+        <div class="row">
+            <!-- time start -->
+            <div class="col-sm-6">
+                 <div [ngClass]="{'form-group':true, 'has-error': timeStart.touched && timeStart.invalid, 'has-success':timeStart.touched && timeStart.valid}" >
+                    <label for="timeStart">زمان شروع تخفیف</label>
+                    <input type="date" class="form-control" id="timeStart" [(ngModel)]="discount.timeStart"
+                    name="timeStart" #timeStart="ngModel">
+                </div>
+            </div>
+            <!-- time end -->
+            <div class="col-sm-6">
+                <div [ngClass]="{'form-group':true, 'has-error': timeEnd.touched && timeEnd.invalid, 'has-success':timeEnd.touched && timeEnd.valid}" >
+                    <label for="timeEnd">زمان پایان تخفیف</label>
+                    <input type="date" class="form-control" id="timeEnd" [(ngModel)]="discount.timeEnd"
+                    name="timeEnd" #timeEnd="ngModel">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="form-group">
+            <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !DiscountForm.form.valid">
+                <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                اعمال تخفیف
+            </button>
+        </div>
+    </div>
+</form>
+</div>
+</div>
+</div>

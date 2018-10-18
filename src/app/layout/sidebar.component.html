@@ -1,0 +1,22 @@
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu nav">
+            <li *ngFor="let item of items | async" routerLinkActive="active">
+                <a *ngIf="item.child"  href="#">
+                    {{item.icon}} <span>{{item.name}}</span>
+                    <span class="pull-left-container"><i class="fa fa-angle-left pull-left"></i></span>
+                </a>
+                <a *ngIf="!item.child" routerLink={{item.to}}>
+                    {{item.icon}} <span>{{item.name}}</span>
+                </a>
+                <ul *ngIf="item.child" class="treeview-menu">
+                    <li *ngFor="let child of item.child">
+                        <a routerLink={{child.to}}>
+                            {{child.icon}} <span>{{child.name}}</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</aside>

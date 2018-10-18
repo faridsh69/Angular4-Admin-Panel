@@ -1,0 +1,482 @@
+<div class="row" *ngIf="initLoading">
+    <div class="col-md-12">
+        <div class="box box-solid">
+            <div class="box-body">
+                <div class="overlay" [setMinHeight]="150" >
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<simple-notifications [options]="options"></simple-notifications>
+
+<div class="product-form" *ngIf="!initLoading">
+    <form (ngSubmit)="onSubmit()" #ProductForm="ngForm">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !ProductForm.form.valid">
+                        <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                        ذخیره
+                    </button>
+                    <!--  <button class="btn btn-default" [(disabled)]="ajaxLoading || !ProductForm.form.valid">
+                         <i class="fa fa-check"></i>
+                         ذخیره و بستن
+                     </button>
+                     <a class="btn btn-danger" routerLink="/product" >
+                         <i class="fa fa-close"></i>  بازگشت به کالاها
+                     </a> -->
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <div [ngClass]="{'form-group':true, 'has-error': nameEn.touched && nameEn.invalid, 'has-success':nameEn.touched && nameEn.valid}" >
+                            <label for="nameEn">نام انگلیسی کالا </label>
+                            <input autocomplete="off" type="text" minlength="2" class="form-control ltr" id="nameEn"    required [(ngModel)]="product.nameEn"  #nameEn="ngModel" name="nameEn" server="{{serverErrorValue['nameEn']['attribute']}}">
+                            <span *ngIf="nameEn.invalid && nameEn.touched">
+                    <span class="help-block" *ngIf="nameEn.errors.required">
+                        نام اجباری است.
+                    </span>
+                    <span class="help-block" *ngIf="nameEn.errors.minlength">
+                        نام باید حداقل ۲ کاراکتر باشد.
+                    </span>
+                    <span *ngIf="nameEn.errors.server">
+                        <span class="help-block" *ngFor="let error of serverErrorValue['nameEn']['message']">{{error}}</span>
+                    </span>
+                </span>
+                        </div>
+                        <!-- persian name -->
+                        <div [ngClass]="{'form-group':true, 'has-error': nameFa.touched && nameFa.invalid, 'has-success':nameFa.touched && nameFa.valid}" >
+                            <label for="nameFa">نام فارسی کالا </label>
+                            <input autocomplete="off" type="text" class="form-control" id="nameFa"
+                                   [(ngModel)]="product.nameFa" name="nameFa" #nameFa="ngModel">
+                        </div>
+                        <!-- category -->
+                        <div [ngClass]="{'form-group':true, 'has-error': categoryId.touched && categoryId.invalid, 'has-success':categoryId.touched && categoryId.valid}">
+                            <label for="categoryId">دسته‌بندی</label>
+                            <span class="help-left" (click)="newCategoryModal = true;"><i class="fa fa-plus"></i>
+                 افزودن دسته‌بندی جدید</span>
+                            <select class="form-control" id="categoryId" [(ngModel)]="product.categoryId"  #categoryId="ngModel"  name="categoryId" (change)="changeCategory()">
+                                <option value="" disabled>دسته‌بندی را انتخاب نمایید...</option>
+                                <option *ngFor="let category of categories" [value]="category.id">
+                                    {{category.depthText+" "+ category.name}}</option>
+                            </select>
+                        </div>
+                        <!-- brand -->
+                        <div [ngClass]="{'form-group':true, 'has-error': brandId.touched && brandId.invalid, 'has-success':brandId.touched && brandId.valid}" >
+                            <label for="brandId">برند</label>
+                            <span class="help-left" (click)="newBrandModal = true;"><i class="fa fa-plus"></i>
+                 افزودن برند جدید</span>
+                            <select class="form-control" id="brandId" [(ngModel)]="product.brandId"
+                                    #brandId="ngModel" name="brandId">
+                                <option value="" disabled>برند را انتخاب نمایید...</option>
+                                <option *ngFor="let brand of brands" [value]="brand.id">{{brand.nameEn}}</option>
+                            </select>
+                        </div>
+
+                        <!-- description -->
+                        <div [ngClass]="{'form-group':true, 'has-error': description.touched && description.invalid, 'has-success':description.touched && description.valid}">
+                            <label for="description">توضیحات</label>
+                            <textarea  class="form-control" id="description" directionDetect
+                                       [(ngModel)]="product.description" name="description" #description="ngModel"></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- pricing  -->
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <span class="help-left" (click)="newAttributeModal = true; isPriceAffected = true ;"><i class="fa fa-plus"></i> افزودن ویژگی برای چند قیمتی کردن </span>
+                        <h4 class="control-label">قیمت کالا</h4>
+                        <span class="btn btn-success" *ngIf="embeddedPrices[0].attribute.length > 0" (click)="addPrice()"> <i class="fa fa-plus"></i> افزودن قیمت جدید </span>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th *ngFor="let attribute of embeddedPrices[0].attribute">
+                                        <label>
+                                            {{ attribute.name }}
+                                        </label>
+                                        <small *ngIf="attribute.unit"> ({{attribute.unit}})</small>
+                                    </th>
+                                    <th>
+                                        <label>قیمت</label>
+                                        <small>(تومان)</small>
+                                    </th>
+                                    <th>
+                                        <label>موجودی</label>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr *ngFor="let embeddedPrice of embeddedPrices; let i = index ">
+                                    <td *ngFor="let attribute of embeddedPrice.attribute;">
+                                        <div *ngIf="attribute.type == 'integer'">
+                                            <input class="form-control" type="number" name="{{i}}-{{attribute.id}}"
+                                                   [(ngModel)]="attribute.data">
+                                        </div>
+                                        <div *ngIf="attribute.type == 'string'">
+                                            <input class="form-control" type="text" name="{{i}}-{{attribute.id}}"
+                                                   [(ngModel)]="attribute.data" directionDetect>
+                                        </div>
+                                        <div *ngIf="attribute.type == 'boolean'">
+                                            <input type="checkbox"
+                                                   [(ngModel)]="attribute.data" name="{{i}}-{{attribute.id}}">
+                                        </div>
+                                        <div *ngIf="attribute.type == 'select'">
+                                            <select class="form-control" [(ngModel)]="attribute.data"
+                                                    name="{{i}}-{{attribute.id}}">
+                                                <option *ngFor="let item of attribute.selectionData" [ngValue]="item.id">
+                                                    {{ item.value }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div *ngIf="attribute.type == 'multiSelect'">
+                                            <select class="form-control" [(ngModel)]="attribute.data"
+                                                    name="attr-{{attribute.id}}-{{i}}"
+                                                    multiple>
+                                                <option *ngFor="let item of attribute.selectionData" [ngValue]="item.id">
+                                                    {{ item.value }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control ltr" name="price-{{i}}"
+                                               [(ngModel)]="embeddedPrice.price" #price="ngModel" min="0">
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control ltr" name="inventory-{{i}}"
+                                               [(ngModel)]="embeddedPrice.inventory" #inventory="ngModel">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="help-block">
+                            برای نامحدود شدن موجودی هر بخش برای سفارش می‌توانید عدد -۱ را وارد کنید.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <!-- product image -->
+                <div class="box box-solid gallery-wrapper">
+                    <div class="box-body">
+                        <div [ngClass]="{'form-group':true}">
+                            <div class="clearfix">
+                                <label for="fileInput">تصویر اصلی کالا</label>
+                                <span class="btn btn-primary add-gallery" (click)="onFileBtnClick()">انتخاب تصویر</span>
+                            </div>
+                            <input #fileInput type="file" (change)="fileChange($event)" class="form-control"
+                                   id="fileInput" name="fileInput" accept="image/*">
+                            <div class="gallery-row">
+                                <div *ngFor="let image of product.gallery" class="img-col">
+                                    <div class="head">
+                                        <i *ngIf="!image.isDeleteLoading" class="fa fa-times remove" (click)="deleteImage(image)"></i>
+                                        <i *ngIf="image.isDeleteLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                                        <i class="fa fa-gear setting"></i>
+                                    </div>
+                                    <img src="{{image.src}}" alt="{{image.alt}}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- google seo -->
+                <div class="box box-solid">
+                    <div class="box-body google-box">
+                        <h5>نمایش در گوگل</h5>
+                        <div class="google-links">
+                            <span class="edit" *ngIf="!editSeo" (click)="editSeo = true" ><i class="fa fa-pencil"></i> ویرایش</span>
+                            <div class="title">{{title}}</div>
+                            <div class="url">{{ url }}</div>
+                            <div class="description">{{ metaDescriptionString }}</div>
+                        </div>
+                        <div *ngIf="editSeo">
+                            <div [ngClass]="{'form-group':true, 'has-error': title.dirty && title.invalid,
+                    'has-success':title.touched && title.valid}" >
+                                <div class="help">توصیه شده گوگل:حداکثر ۷۰ کارکتر</div>
+                                <label for="title">عنوان</label>
+                                <input type="text"  class="form-control" directionDetect id="title" [(ngModel)]="product.title"
+                                       name="title" #title="ngModel">
+                            </div>
+
+                            <div [ngClass]="{'form-group':true, 'has-error': slug.dirty && slug.invalid, 'has-success':slug.touched && slug.valid}">
+                                <label for="slug">لینک برند</label>
+                                <input directionDetect type="text" class="form-control" id="slug" [(ngModel)]="product.slug" name="slug" #slug="ngModel"
+                                       server="{{serverErrorValue['slug']['attribute']}}" pattern="[^ \;\/\?\:\@\=\& \<\>\#\%\{\}\|\\\^\~\[\]\`]+">
+                                <span *ngIf="slug.invalid && slug.dirty">
+                        <span class="help-block" *ngIf="slug.errors.pattern">استفاده از فاصله و برخی کارکترها در لینک غیر مجاز می باشد.
+                            شما در لینک خود می توانید از این کارکترها استفاده نمایید
+                            <code>"$" "-" "_" "." "+" "!" "*" "'" "(" ")" ","</code>
+                        </span>
+                        <span class="help-block" *ngFor="let error of serverErrorValue['slug']['message']">{{error}}</span>
+                    </span>
+                            </div>
+
+                            <div [ngClass]="{'form-group':true, 'has-error': metaDescription.dirty
+                    && metaDescription.invalid, 'has-success':metaDescription.touched && metaDescription.valid}">
+                                <div class="help">توصیه شده گوگل:حداکثر ۱۶۰ کارکتر</div>
+                                <label for="metaDescription">توضیحات</label>
+                                <textarea directionDetect class="form-control" id="metaDescription" [(ngModel)]="product.metaDescription"
+                                          name="metaDescription" #metaDescription="ngModel"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- fix features  -->
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <a class="help-left" (click)="newAttributeModal = true; isPriceAffected = false;">
+                            <i class="fa fa-plus"></i> افزودن ویژگی جدید</a>
+                        <h5 class="control-label">ویژگی‌های کالا</h5>
+                        <br>
+                        <div class="row">
+                            <div class="col-xs-11">
+                                <div class="form-horizontal">
+                                    <div *ngFor="let attribute of attributes" >
+                                        <div *ngIf="!attribute.isPriceAffected" class="form-group">
+                                            <div class="col-xs-1">
+                                                <span class="close" (click)="removeAttribute(attribute)">&times;</span>
+                                            </div>
+                                            <label class="control-label col-sm-3 col-xs-11" for="attr-{{attribute.id}}">
+                                                {{ attribute.name }}
+                                                <small *ngIf="attribute.unit"> ({{attribute.unit}})</small>
+                                            </label>
+
+                                            <div *ngIf="attribute.type == 'integer'">
+                                                <input class="col-sm-8 form-control" type="number" id="attr-{{attribute.id}}"
+                                                       [(ngModel)]="attribute.data"  name="attr-{{attribute.id}}">
+                                            </div>
+                                            <div *ngIf="attribute.type == 'string'">
+                                                <input class="col-sm-8 form-control" type="text" id="attr-{{attribute.id}}"
+                                                       [(ngModel)]="attribute.data" directionDetect name="attr-{{attribute.id}}">
+                                            </div>
+                                            <div *ngIf="attribute.type == 'boolean'">
+                                                <div class="col-sm-8">
+                                                    <input type="checkbox" id="attr-{{attribute.id}}"
+                                                           [(ngModel)]="attribute.data" name="attr-{{attribute.id}}">
+                                                </div>
+                                            </div>
+                                            <div *ngIf="attribute.type == 'select'">
+                                                <select class="col-sm-8 form-control" id="attr-{{attribute.id}}"
+                                                        [(ngModel)]="attribute.data" name="attr-{{attribute.id}}">
+                                                    <option *ngFor="let item of attribute.selectionData" [ngValue]="item.id">
+                                                        {{ item.value }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div *ngIf="attribute.type == 'multiSelect'">
+                                                <select class="col-sm-8 form-control" id="attr-{{attribute.id}}"
+                                                        [(ngModel)]="attribute.data" name="attr-{{attribute.id}}" multiple>
+                                                    <option *ngFor="let item of attribute.selectionData" [ngValue]="item.id">
+                                                        {{ item.value }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- attribute modal -->
+    <div [ngClass]="{'modal':true, 'show': newAttributeModal }" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" (click)="newAttributeModal = false">&times;</button>
+                    <h5 class="modal-title"> تعریف ویژگی </h5>
+                </div>
+                <form (ngSubmit)="onSubmitAttribute()" #AttributeForm="ngForm">
+                    <div class="modal-body" *ngIf="!selectOldAttr">
+                        <a class="help-left" (click)="selectOldAttributes()">
+                            انتخاب از ویژگی‌های قبلی</a>
+                        <div [ngClass]="{'form-group':true, 'has-error': Attrname.touched &&
+                        Attrname.invalid, 'has-success':Attrname.touched && Attrname.valid}">
+                            <label for="name">نام ویژگی</label>
+                            <input type="text" class="form-control" id="name" required minlength="2"
+                                   [(ngModel)]="attribute.name"  name="name" #Attrname="ngModel"
+                                   server="{{serverErrorValue['name']['attribute']}}" directionDetect>
+                            <span *ngIf="Attrname.invalid && Attrname.touched">
+                            <span class="help-block" *ngIf="Attrname.errors.required">
+                                نام اجباری است.
+                            </span>
+                            <span class="help-block" *ngIf="Attrname.errors.minlength">
+                                نام باید حداقل ۲ کاراکتر باشد.
+                            </span>
+                            <span *ngIf="Attrname.errors.server">
+                                <span class="help-block" *ngFor="let error of serverErrorValue['name']['message']">{{error}}</span>
+                            </span>
+                        </span>
+                        </div>
+
+                        <div [ngClass]="{'form-group':true, 'has-error': type.touched && type.invalid,
+                        'has-success':type.touched && type.valid}" >
+                            <label for="type">نوع ویژگی</label>
+                            <select class="form-control" id="type" [(ngModel)]="attribute.type"
+                                    name="type" #type="ngModel" required>
+                                <option value="" disabled>نوع ویژگی را انتخاب نمایید...</option>
+                                <option value="integer">واحددار (عددی)</option>
+                                <option value="string">نوشته</option>
+                                <option value="boolean">بله - خیر</option>
+                                <option value="select">انتخابی</option>
+                                <option value="multiSelect">انتخابی چند مقداری</option>
+                            </select>
+                            <span *ngIf="type.invalid && type.touched">
+                            <span *ngIf="type.errors.server">
+                                <span class="help-block" *ngFor="let error of serverErrorValue['type']['message']">{{error}}</span>
+                            </span>
+                        </span>
+                        </div>
+
+                        <div [ngClass]="{'hide-option':true,'show': attribute.type=='integer', 'form-group':true, 'has-error': unit.touched && unit.invalid, 'has-success':unit.touched && unit.valid}">
+                            <label for="unit">واحد</label>
+                            <input type="text" class="form-control" id="unit" placeholder="کیلوگرم"
+                                   [(ngModel)]="attribute.unit" name="unit" #unit="ngModel">
+                        </div>
+
+                        <div [ngClass]="{'hide-option':true,'form-group':true ,'has-error': selectionData.touched
+                        && selectionData.invalid, 'has-success':selectionData.touched && selectionData.valid,
+                        'show': attribute.type=='select' || attribute.type=='multiSelect' }">
+                            <div class="help-left">آیتم‌های مورد نظر را با + از هم جدا کنید.</div>
+                            <label for="selectionData">انتخاب‌ها</label>
+                            <input class="form-control" id="selectionData" name="selectionData"
+                                   [(ngModel)]="attribute.selectionData" #selectionData="ngModel"
+                                   placeholder="مرد+زن">
+                        </div>
+
+                        <!-- <div class="form-group">
+                            <input type="checkbox" id="isRequired" [(ngModel)]="attribute.isRequired"
+                                name="isRequired" #isRequired="ngModel">
+                            <label class="control-label" for="isRequired" >مقدار دادن به این ویژگی اجباری باشد</label>
+                        </div> -->
+                    </div>
+                    <div class="modal-body" *ngIf="selectOldAttr">
+                    <span class="help-left" (click)="selectOldAttr = false;oldAttributeId = '' ">
+                        <i class="fa fa-plus"></i>
+                        تعریف ویژگی جدید
+                    </span>
+                        <div [ngClass]="{'form-group':true}">
+                            <label for="oldAttributeId">ویژگی‌های قبل
+                                <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                            </label>
+                            <select class="form-control" id="oldAttributeId" [(disabled)]="ajaxLoading"
+                                    [(ngModel)]="oldAttributeId" name="oldAttributeId">
+                                <option value="" disabled>ویژگی را انتخاب نمایید...</option>
+                                <option *ngFor="let item of oldAttributes" [ngValue]="item.id"
+                                        [ngClass]="{'hide-option':true,'show': item.isPriceAffected==isPriceAffected} ">
+                                <span>
+                                    {{ item.name }}
+                                </span>
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !AttributeForm.form.valid">
+                                <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                                ذخیره
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- category modal -->
+    <div [ngClass]="{'modal':true, 'show': newCategoryModal }" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" (click)="newCategoryModal = false">&times;</button>
+                    <h5 class="modal-title"> ایجاد دسته‌بندی جدید </h5>
+                </div>
+                <form (ngSubmit)="onSubmitCategory()" #CategoryForm="ngForm">
+                    <div class="modal-body">
+                        <div [ngClass]="{'form-group':true, 'has-error': categoryName.touched && categoryName.invalid, 'has-success':categoryName.touched && categoryName.valid}" >
+                            <label for="categoryName">نام دسته </label>
+                            <input autocomplete="off" type="text" minlength="2" class="form-control" id="categoryName"    required [(ngModel)]="category.name"  #categoryName="ngModel" name="categoryName" directionDetect
+                                   server="{{serverErrorValue['categoryName']['attribute']}}" >
+                            <span *ngIf="categoryName.invalid && categoryName.touched">
+                            <span class="help-block" *ngIf="categoryName.errors.required">
+                                نام اجباری است.
+                            </span>
+                            <span class="help-block" *ngIf="categoryName.errors.minlength">
+                                نام باید حداقل ۲ کاراکتر باشد.
+                            </span>
+                            <span *ngIf="categoryName.errors.server">
+                                <span class="help-block" *ngFor="let error of serverErrorValue['categoryName']['message']">{{error}}</span>
+                            </span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !CategoryForm.form.valid">
+                                <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                                ذخیره
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- brand modal -->
+    <div [ngClass]="{'modal':true, 'show': newBrandModal }" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" (click)="newBrandModal = false">&times;</button>
+                    <h5 class="modal-title"> ایجاد برند جدید </h5>
+                </div>
+                <form (ngSubmit)="onSubmitBrand()" #BrandForm="ngForm">
+                    <div class="modal-body">
+                        <div [ngClass]="{'form-group':true, 'has-error': brandNameEn.touched &&
+                        brandNameEn.invalid, 'has-success':brandNameEn.touched && brandNameEn.valid}">
+                            <label for="brandNameEn">نام برند</label>
+                            <input type="text" class="form-control" id="brandNameEn" required autocomplete="off"
+                                   [(ngModel)]="brand.nameEn"  name="brandNameEn" #brandNameEn="ngModel" directionDetect
+                                   server="{{serverErrorValue['brandNameEn']['attribute']}}" minlength="2">
+                            <span *ngIf="brandNameEn.invalid && brandNameEn.touched">
+                            <span class="help-block" *ngIf="brandNameEn.errors.required">
+                                نام اجباری است.
+                            </span>
+                            <span class="help-block" *ngIf="brandNameEn.errors.minlength">
+                                نام باید حداقل ۲ کاراکتر باشد.
+                            </span>
+                            <span *ngIf="brandNameEn.errors.server">
+                                <span class="help-block" *ngFor="let error of
+                                    serverErrorValue['brandNameEn']['message']">{{error}}</span>
+                            </span>
+                        </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !BrandForm.form.valid">
+                                <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                                ذخیره
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

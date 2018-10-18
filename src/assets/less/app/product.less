@@ -1,0 +1,44 @@
+.product-form{
+  .gallery-wrapper {
+    .add-gallery {
+      float: left;
+    }
+    #fileInput {
+      display: none;
+    }
+    .gallery-row {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      align-items: baseline;
+      .img-col{
+        flex-basis: 50%;
+        @media(max-width: @screen-xs-min){
+          flex-basis: 100%;
+        }
+        padding: 15px;
+        img {
+          width: 100%;
+          border: 1px solid @light-blue;
+          .transition(all 200ms);
+          &:hover{
+            border-color: darken(@light-blue, 10%);
+          }
+        }
+        .head {
+          background-color: @light-blue;
+          line-height: 18px;
+          padding: 0 5px;
+          .fa {
+            color: @body-bg;
+            cursor: pointer;
+            line-height: 18px;
+          }
+          .setting{
+            float: left;
+          }
+        }
+      }
+    }
+  }
+}

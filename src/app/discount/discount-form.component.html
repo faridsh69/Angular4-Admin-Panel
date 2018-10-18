@@ -1,0 +1,101 @@
+<form (ngSubmit)="onSubmit()" #DiscountForm="ngForm">
+<div class="box box-solid">
+    <div class="box-body">
+        <div class="form-group">
+            <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !DiscountForm.form.valid">ذخیره <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i></button>
+        </div>
+        <!-- name -->
+        <div [ngClass]="{'form-group':true, 'has-error': name.touched && name.invalid, 'has-success':name.touched && name.valid}" >
+            <label for="name">نام کد تخفیف</label>
+            <input type="text" class="form-control" id="name" directionDetect [(ngModel)]="discount.name" server="{{serverErrorValue['name']['attribute']}}"
+            name="name" #name="ngModel">
+            <span *ngIf="name.invalid && name.touched">            
+                <span *ngIf="name.errors.server">
+                    <span class="help-block" *ngFor="let err of serverErrorValue['name']['message']">{{err}}</span>
+                </span>
+            </span>
+        </div>
+        <!-- code -->
+        <div [ngClass]="{'form-group':true, 'has-error': code.touched && code.invalid, 'has-success':code.touched && code.valid}" >
+            <label for="code">کد تخفیف</label>
+            <span class="help-left" (click)="generateCode()"><i class="fa fa-plus"></i>
+                 تولید کد</span>
+            <input type="text" class="form-control" id="code" directionDetect [(ngModel)]="discount.code" server="{{serverErrorValue['code']['attribute']}}"
+            name="code" #code="ngModel">
+            <span *ngIf="code.invalid && code.touched">            
+                <span *ngIf="code.errors.server">
+                    <span class="help-block" *ngFor="let err of serverErrorValue['code']['message']">{{err}}</span>
+                </span>
+            </span>
+        </div>
+        <!-- type -->
+        <div [ngClass]="{'form-group':true, 'has-error': type.touched && type.invalid, 'has-success':type.touched && type.valid}" >
+            <label for="type">نوع کد تخفیف</label>
+            <select class="form-control" id="type" [(ngModel)]="discount.type" name="type"
+             #type="ngModel" server="{{serverErrorValue['type']['attribute']}}">
+                <option value="amount">مبلغ ثابت</option>
+                <option value="percent">درصدی از قیمت</option>
+            </select>
+            <span *ngIf="type.invalid && type.touched">
+                <span *ngIf="type.errors.server">
+                    <span class="help-block" *ngFor="let err of serverErrorValue['type']['message']">{{err}}</span>
+                </span>
+            </span>
+        </div>
+        <!-- value -->
+        <div [ngClass]="{'form-group':true, 'has-error': value.touched && value.invalid, 'has-success':value.touched && value.valid}" >
+            <label for="value">مقدار تخفیف</label>
+            <input type="text" class="form-control" id="value" [(ngModel)]="discount.value" server="{{serverErrorValue['value']['attribute']}}"
+            name="value" #value="ngModel">
+            <span *ngIf="value.invalid && value.touched">            
+                <span *ngIf="value.errors.server">
+                    <span class="help-block" *ngFor="let err of serverErrorValue['value']['message']">{{err}}</span>
+                </span>
+            </span>
+        </div>
+        <!-- minimum price -->
+        <div [ngClass]="{'form-group':true, 'has-error': minimumPrice.touched && minimumPrice.invalid, 'has-success':minimumPrice.touched && minimumPrice.valid}" >
+            <label for="minimumPrice">حداقل خرید</label>
+            <input type="text" class="form-control" id="minimumPrice" [(ngModel)]="discount.minimumPrice" name="minimumPrice" #minimumPrice="ngModel">
+        </div>
+    </div>
+</div>
+<div class="box box-solid">
+    <div class="box-body">
+        <!-- times -->
+        <div [ngClass]="{'form-group':true, 'has-error': timeStart.touched && timeStart.invalid, 'has-success':timeStart.touched && timeStart.valid}" >
+            <label for="timeStart">زمان شروع تخفیف</label>
+            <input type="date" class="form-control" id="timeStart" directionDetect [(ngModel)]="discount.timeStart"
+            name="timeStart" #timeStart="ngModel">
+        </div>
+        <div [ngClass]="{'form-group':true, 'has-error': timeEnd.touched && timeEnd.invalid, 'has-success':timeEnd.touched && timeEnd.valid}" >
+            <label for="timeEnd">زمان پایان تخفیف</label>
+            <input type="date" class="form-control" id="timeEnd" directionDetect [(ngModel)]="discount.timeEnd"
+            name="timeEnd" #timeEnd="ngModel">
+        </div>
+    </div>
+</div>
+<div class="box box-solid">
+    <div class="box-body">
+        <!-- count -->
+        <div [ngClass]="{'form-group':true, 'has-error': count.touched && count.invalid, 'has-success':count.touched && count.valid}" >
+            <label for="count">دفعات مصرف</label>
+            <input type="number" class="form-control" id="count" directionDetect [(ngModel)]="discount.count"
+            name="count" #count="ngModel">
+        </div>
+        <!-- customer -->        
+        <div [ngClass]="{'form-group':true, 'has-error': customer.touched && customer.invalid, 'has-success':customer.touched && customer.valid}" >
+            <label for="customer">مشتریان</label>
+            <input type="text" class="form-control" id="customer" directionDetect [(ngModel)]="discount.customer"
+            name="customer" #customer="ngModel">
+        </div>
+        <!-- category -->        
+        <div [ngClass]="{'form-group':true, 'has-error': category.touched && category.invalid, 'has-success':category.touched && category.valid}" >
+            <label for="category">دسته بندی ها</label>
+            <input type="text" class="form-control" id="category" directionDetect [(ngModel)]="discount.category"
+            name="category" #category="ngModel">
+        </div>
+    </div>
+</div>
+</form>
+

@@ -1,0 +1,51 @@
+<section class="content-body product-brand">
+    <div class="row">
+        <div class="col-xs-12">
+            <a class="btn btn-default " routerLink="/product/new" >
+                <i class="fa fa-plus"></i>
+                ایجاد کالا جدید
+            </a>
+        </div>
+    </div>
+    <div *ngIf="products === null">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <div class="overlay" [setMinHeight]="150" >
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="products">
+        <div *ngIf="products.length === 0">
+            <div class="modal inside">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <i class="fa fa-pencil icon"></i>
+                            <h4 *ngIf="products.length === 0">اولین کالا خود را ایجاد نمایید</h4>
+                            <a class="btn btn-default " routerLink="/product/new" >
+                                <i class="fa fa-plus"></i>
+                                ایجاد کالا جدید
+                            </a>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" *ngIf="products.length > 0">
+            <div class="col-xs-12">
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <product-table [products]="products"></product-table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

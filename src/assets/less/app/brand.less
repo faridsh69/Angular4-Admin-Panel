@@ -1,0 +1,21 @@
+.brand-form {
+  .logo-preview{
+    padding: 10px 0;
+    text-align: center;
+    > img {
+      border: 1px solid @body-bg;
+      max-width: 100px;
+    }
+    > span {
+      position: absolute;
+      left: 10px;
+      font-size: 10px;
+      color: @light-blue;
+      .transition(all 200ms);
+      cursor: pointer;
+      &:hover{
+        color: darken(@light-blue, 10%);
+      }
+    }
+  }
+}

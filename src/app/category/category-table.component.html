@@ -1,0 +1,28 @@
+<div class="table-responsive">
+    <table class="table table-striped table-bordered  dataTable" role="grid">
+        <thead>
+            <th style="width:30px">ردیف</th>
+            <th>نام</th>
+            <th style="width:110px">عملیات</th>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of categories" role="row" attr.data-index="{{categories.indexOf(item)}}">
+            <td style="text-align:center">{{categories.indexOf(item)+1}}</td>
+            <td>{{item.depthText}} {{item.name}} </td>
+            <td>
+                <a title="ویرایش" [routerLink]="['/category/update', item.id]" (click)="onClick(item)">
+                    <i class="fa fa-edit"></i>  
+                </a>
+                <a title="مشاهده صفحه" href="{{categoryUrl + item.slug}}" target="_blank">
+                    <i class="fa fa-eye"></i>
+                </a>
+                <a title="تغییر وضعیت نمایش" (click)="changeStatus(item)">
+                    <input type='checkbox' [(ngModel)]="item.status" class='ios8-switch ios8-switch-sm'
+                    #status="ngModel" name="status"  id='checkbox-2'>
+                    <label for='checkbox-2'></label>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>

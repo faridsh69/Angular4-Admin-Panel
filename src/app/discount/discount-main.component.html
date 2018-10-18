@@ -1,0 +1,55 @@
+<simple-notifications [options]="options"></simple-notifications>
+
+<div class="product-discount">
+    <div *ngIf="!discounts">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <div class="overlay" [setMinHeight]="150" >
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="discounts">
+        <div *ngIf="discounts.length === 0 || scenario === 'update'">
+            <div class="modal inside">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="back" *ngIf="discounts.length != 0">
+                                <a routerLink="/discount"><i class="fa fa-angle-right"></i>
+                                     بازگشت به کوپن‌‌ها</a>
+                            </div>
+                            <i class="fa fa-pencil icon"></i>
+                            <h4 *ngIf="discounts.length === 0">اولین کوپن تخفیف خود را ایجاد نمایید</h4>
+                            <div *ngIf="scenario === 'update'">
+                                <h4>ویرایش کوپن‌ تخفیف <b>{{selectedDiscount.name}}</b></h4>
+                            </div>
+                            <discount-form [discounts]="discounts"  [discount]="selectedDiscount" (onUpdateDiscounts)="updateDiscounts($event)"></discount-form>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!(discounts.length === 0 || scenario === 'update')">
+            <div class="row">
+                <div class="col-md-5">
+                    <discount-form [discount]="selectedDiscount" (onUpdateDiscount)="updateDiscount($event)"></discount-form>   
+                </div>
+                <div class="col-md-7">
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <discount-table (onUpdateSelectedDiscount)="updateSelectedDiscount($event)" [discounts]="discounts"></discount-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

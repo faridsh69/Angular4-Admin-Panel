@@ -1,0 +1,436 @@
+@banner_rate : 0.65;
+@banner_padding: 12.5em;
+
+
+.order-form {
+  min-height: 250px;
+  padding: 20px;
+
+  .order-price {
+    float: left;
+    margin-left: 20px;
+    #unit-price {
+      .transition(all 200ms ease);
+      .unit {
+        font-weight: bold;
+      }
+      .currency {
+        font-size: 11px;
+      }
+      &.fixed {
+        padding: 1em;
+        position: fixed;
+        border: 1px solid #ECF0F5;
+        border-radius: 0.5em;
+        left: 40px;
+        top: 1em;
+        background-color: #fff;
+        z-index: 2;
+      }
+    }
+  }
+
+  form {
+    > .row {
+      margin-bottom: 20px;
+    }
+
+    .ltr {
+      direction: ltr;
+    }
+
+    p.desc {
+      padding: 10px 15px;
+      border-right: 4px solid @light-blue;
+      background-color:  @body-bg;
+      text-align: justify;
+    }
+    .checkbox .info {
+      .h5 {
+        i {
+          margin-left: 5px;
+        }
+      }
+      margin-top: 21px;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      background-color: #f8f8f8;
+      text-align: justify;
+    }
+    .inner-link {
+      margin-bottom: 50px;
+    }
+  }
+
+
+  .buttons {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px;
+    .next {
+      float: left;
+      .fa {
+        margin-right: 5px;
+      }
+    }
+    .prev {
+      float: right;
+      .fa {
+        margin-left: 5px;
+      }
+    }
+  }
+
+  .url {
+    direction: ltr;
+  }
+}
+.charge-order {
+  .per-click-price {
+    font-size: 15px;
+    margin: 10px;
+    padding-bottom: 10px;
+    color: #555;
+  }
+  .items {
+    .clearfix();
+    width: 50%;
+    padding: 0;
+    margin: auto;
+    list-style: none;
+    @media (max-width: @screen-md-max) {
+      width: 60%;
+    }
+    @media (max-width: @screen-sm-max) {
+      width: 75%;
+    }
+    @media (max-width: @screen-xs-max) {
+      width: 100%;
+    }
+
+    li {
+      float: right;
+      width: 30%;
+      background-color: @body-bg;
+      border: 1px solid darken(@body-bg, 10%);
+      border-radius: 5px;
+      margin-left: 10px;
+      margin-bottom: 10px;
+      text-align: center;
+      cursor: pointer;
+      height: 135px;
+      position: relative;
+      .transition(all 250ms ease);
+
+      .charge {
+        padding: 10px 0;
+        font-size: 15px;
+        background-color: #f9f9f9;
+        .transition(all 250ms ease);
+        span.currency {
+          font-size: 12px;
+          color: @light-blue;
+          .transition(all 250ms ease);
+        }
+      }
+      .discount {
+        font-size: 11px;
+        padding: 10px 5px;
+        color: @light-blue;
+        border-top: 3px dashed #f9f9f9;
+      }
+      .total-click {
+        position: absolute;
+        bottom: 10px;
+        right: 0;
+        left: 0;
+        span {
+          font-size: 11px;
+          color: darken(@body-bg, 50%);
+        }
+      }
+
+      &:hover {
+        border-color: darken(@body-bg, 20%);
+        .charge {
+          color: @maroon;
+          span.currency {
+            color: lighten(@maroon, 10%);
+          }
+        }
+        &.desired {
+          color: @maroon;
+        }
+      }
+
+      &.active {
+        border-color: darken(@body-bg, 30%);
+        .charge {
+          color: darken(@maroon, 10%);
+          span.currency {
+            color: lighten(@maroon, 5%);
+          }
+        }
+      }
+
+      &.desired {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+      }
+    }
+  }
+  .desired-charge {
+    min-height: 280px;
+    border: 1px solid #eee;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+    margin: auto;
+    width: 50%;
+
+    @media (max-width: @screen-md-max) {
+      width: 60%;
+    }
+    @media (max-width: @screen-sm-max) {
+      width: 75%;
+    }
+    @media (max-width: @screen-xs-max) {
+      width: 100%;
+    }
+
+    .back {
+      position: absolute;
+      left: 10px;
+      font-size: 10px;
+      color: @light-blue;
+      cursor: pointer;
+      .transition(all 100ms ease-out);
+      .fa {
+        margin-right: 5px;
+        .transition(all 100ms ease-out);
+      }
+      &:hover {
+        color: darken(@light-blue, 10%);
+        .fa {
+          margin-right: 10px;
+        }
+      }
+    }
+
+    .form-group {
+      margin-top: 15px;
+      .inputWrapper {
+        position: relative;
+        input {
+          width: 50%;
+          margin: 10px auto;
+          direction: ltr;
+          @media (max-width: @screen-md-max) {
+            width: 60%;
+          }
+          @media (max-width: @screen-sm-max) {
+            width: 75%;
+          }
+          @media (max-width: @screen-xs-max) {
+            width: 100%;
+          }
+        }
+        span.currency {
+          position: absolute;
+          top: (34px - 23px)/2;
+          right: 25%;
+          margin-right: 5px;
+          font-size: 11px;
+          background-color: @body-bg;
+          border: 1px solid darken(@body-bg, 10%);
+          color: darken(@body-bg, 30%);
+          padding: 3px 5px;
+          border-radius: 5px;
+          @media (max-width: @screen-md-max) {
+            right: 20%;
+          }
+          @media (max-width: @screen-sm-max) {
+            right: 13%;
+          }
+          @media (max-width: @screen-xs-max) {
+            right: 5px;
+          }
+        }
+      }
+    }
+
+    .discount {
+      padding: 10px 5px;
+      color: @light-blue;
+    }
+    .total-click {
+      font-size: 16px;
+      padding: 20px;
+      border: 1px solid #e9e9e9;
+      background-color: #f9f9f9;
+      width: 50%;
+      margin: 20px auto;
+      span {
+        font-size: 14px;
+        color: darken(@body-bg, 50%);
+      }
+    }
+
+  }
+  .payment {
+    table {
+      margin: 40px auto 20px;
+      tr {
+        border: 1px solid #eee;
+        td {
+          color: #666;
+          padding: 10px 20px;
+          &:first-child, span.currency {
+            font-size: smaller;
+          }
+        }
+
+        &.charge-tr {
+          font-size: 18px;
+          .p {
+            color: @maroon;
+            span.currency {
+              color: lighten(@maroon, 15%);
+            }
+          }
+        }
+        &.price-tr {
+          font-size: 15px;
+          .p {
+            color: @light-blue;
+            span.currency {
+              color: lighten(@light-blue, 15%);
+            }
+          }
+        }
+      }
+    }
+    .pay-title {
+      text-align: center;
+    }
+    .radio {
+      text-align: center;
+      label {
+        margin-left: 20px;
+      }
+    }
+
+    .btn.btn-app {
+      height: auto;
+      padding: 10px 5px;
+    }
+    .online {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .into-no-table {
+      margin: 25px auto;
+      border: 1px solid #eee;
+      padding: 20px;
+      width: 35%;
+      @media (max-width: @screen-md-max) {
+        width: 45%;
+      }
+      @media (max-width: @screen-sm-max) {
+        width: 60%;
+      }
+      @media (max-width: @screen-xs-max) {
+        width: 85%;
+      }
+      > div {
+        margin-bottom: 20px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+      .ltr {
+        direction: ltr;
+        text-align: left;
+      }
+      .final-price {
+        font-size: 12px;
+        color: @light-blue;
+        .p {
+          font-weight: bold;
+        }
+      }
+      .btn {
+        margin: 0;
+      }
+
+    }
+
+  }
+}
+
+.order-index {
+  .no-orders {
+     .modal {
+      position: relative;
+      top: auto;
+      bottom: auto;
+      right: auto;
+      left: auto;
+      display: block;
+      z-index: 1;
+      background: transparent !important;
+
+       .modal-dialog {
+         @media (min-width: @screen-tablet){
+           width: 500px;
+         }
+         @media (min-width: @screen-desktop){
+           width: 600px;
+         }
+
+       }
+
+
+       .modal-body {
+         text-align: center;
+         h4 {
+           color: @light-blue;
+           text-align: center;
+         }
+         .fa {
+           font-size: 60px;
+           margin-bottom: 20px;
+           color: darken(@body-bg, 5%);
+         }
+         .btn {
+           margin-top: 20px;
+         }
+       }
+
+    }
+  }
+}
+
+.order-view {
+  .box-header {
+    @media (max-width: @screen-xs-max) {
+      .col-xs-12 {
+        margin-bottom: 10px;
+        .form-control {
+          float: left;
+        }
+      }
+    }
+
+    .form-control {
+      display: inline;
+      width: auto;
+    }
+  }
+
+}

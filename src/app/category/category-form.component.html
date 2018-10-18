@@ -1,0 +1,98 @@
+<form (ngSubmit)="onSubmit()" #CategoryForm="ngForm">
+<div class="box box-solid">
+<div class="box-body">
+    
+    <div class="form-group">
+        <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !CategoryForm.form.valid">ذخیره <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i></button>
+        <!-- <h4 class="text-right">
+            ایجاد دسته‌بند جدید
+        </h4> -->
+    </div>
+    <div
+        [ngClass]="{'form-group':true, 'has-error': name.touched && name.invalid, 'has-success':name.touched && name.valid}" >
+        <label for="name">نام دسته</label>
+        <input type="text" minlength="2" class="form-control" id="name" directionDetect required [(ngModel)]="category.name" server="{{serverErrorValue['name']['attribute']}}"
+        name="name" #name="ngModel">
+        <span *ngIf="name.invalid && name.touched">
+            <span class="help-block" *ngIf="name.errors.required">
+                نام اجباری است.
+            </span>
+            <span class="help-block" *ngIf="name.errors.minlength">
+                نام باید حداقل ۲ کاراکتر باشد.
+            </span>
+            <span *ngIf="name.errors.server">
+                <span class="help-block" *ngFor="let err of serverErrorValue['name']['message']">{{err}}</span>
+            </span>
+        </span>
+    </div>
+
+    <div
+    [ngClass]="{'form-group':true, 'has-error': parentId.touched && parentId.invalid, 'has-success':parentId.touched && parentId.valid}" >
+        <label for="parentId">مادر</label>
+        <select class="form-control" id="parentId" [(ngModel)]="category.parentId" name="parentId"
+         #parentId="ngModel" server="{{serverErrorValue['parentId']['attribute']}}">
+            <option [ngValue]=null>سر شاخه</option>
+            <option *ngFor="let parent of categories" [ngValue]="parent.id">{{parent.depthText+" "+ parent.name}}</option>
+        </select>
+        <span *ngIf="parentId.invalid && parentId.touched">
+            <span *ngIf="parentId.errors.server">
+                <span class="help-block" *ngFor="let err of serverErrorValue['parentId']['message']">{{err}}</span>
+            </span>
+        </span>
+    </div>
+
+    <div
+    [ngClass]="{'form-group':true, 'has-error': description.touched && description.invalid, 'has-success':description.touched && description.valid}">
+        <label for="name">توضیحات</label>
+        <textarea class="form-control" id="description" directionDetect server="{{serverErrorValue['description']['attribute']}}"
+        [(ngModel)]="category.description" name="description" #description="ngModel"></textarea>
+        <span *ngIf="description.invalid && description.touched">
+            <span class="help-block" *ngFor="let err of serverErrorValue['description']['message']">{{err}}</span>
+        </span>
+    </div>
+</div>
+</div>
+<!-- google seo -->
+<div class="box box-solid">
+<div class="box-body google-box">
+    <h5>نمایش در گوگل</h5>
+    <div class="google-links">
+        <span class="edit" *ngIf="!editSeo" (click)="editSeo = true" ><i class="fa fa-pencil"></i> ویرایش</span>
+        <div class="title">{{ title }}</div>
+        <div class="url">{{ url }}</div>
+        <div class="description">{{ metaDescriptionString }}</div>
+    </div>
+    <div *ngIf="editSeo">
+        <div [ngClass]="{'form-group':true, 'has-error': title.dirty && title.invalid
+            ,'has-success':title.touched && title.valid}">
+            <div class="help">توصیه شده گوگل:حداکثر 70 کارکتر</div>
+            <label for="title">عنوان</label>
+            <input type="text"  class="form-control" directionDetect id="title" 
+            [(ngModel)]="category.title" name="title" #title="ngModel">
+        </div>
+        
+        <div [ngClass]="{'form-group':true, 'has-error': slug.dirty && slug.invalid, 'has-success':slug.touched && slug.valid}">
+            <label for="slug">لینک دسته بندی</label>
+            <input type="text" class="form-control" id="slug" directionDetect 
+            [(ngModel)]="category.slug" name="slug" #slug="ngModel"
+            server="{{serverErrorValue['slug']['attribute']}}" pattern="[^ \;\/\?\:\@\=\& \<\>\#\%\{\}\|\\\^\~\[\]\`]+">
+            <span *ngIf="slug.invalid && slug.dirty">
+                <span class="help-block" *ngIf="slug.errors.pattern">استفاده از فاصله و برخی کارکترها در لینک غیر مجاز می باشد.
+                    شما در لینک خود می توانید از این کارکترها استفاده نمایید
+                    <code>"$" "-" "_" "." "+" "!" "*" "'" "(" ")" ","</code>
+                </span>
+                <span class="help-block" *ngFor="let err of serverErrorValue['slug']['message']">{{err}}</span>
+            </span>
+        </div>
+        <div [ngClass]="{'form-group':true, 'has-error': metaDescription.dirty && metaDescription.invalid
+            , 'has-success':metaDescription.touched && metaDescription.valid}">
+            <div class="help">توصیه شده گوگل:حداکثر 160 کارکتر</div>
+            <label for="metaDescription">توضیحات</label>
+            <textarea directionDetect class="form-control" id="metaDescription" [(ngModel)]="category.metaDescription"
+                      name="metaDescription" #metaDescription="ngModel"></textarea>
+        </div>
+    </div>
+</div>
+</div>    
+</form>
+

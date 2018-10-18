@@ -1,0 +1,139 @@
+<simple-notifications [options]="options"></simple-notifications>
+
+<div class="brand-form" *ngIf="!firstLoading">
+    <div class="row">
+        <form (ngSubmit)="onSubmit()" #BrandForm="ngForm">
+            <div class="col-md-7">
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success" [(disabled)]="ajaxLoading || !BrandForm.form.valid">
+                                ذخیره
+                                <i *ngIf="ajaxLoading" class="fa fa-refresh fa-spin m-r refresh"></i>
+                            </button>
+                            <!-- <a class="btn btn-danger" routerLink="/brand" >
+                                <i class="fa fa-close"></i>بازگشت به برندها
+                            </a> -->
+                        </div>
+                        <div [ngClass]="{'form-group':true, 'has-error': nameEn.touched && nameEn.invalid, 'has-success':nameEn.touched && nameEn.valid}" >
+                            <label for="nameEn">نام انگلیسی</label>
+                            <input type="text" minlength="2" class="form-control ltr" id="nameEn" [(ngModel)]="brand.nameEn" server="{{serverErrorValue['nameEn']['attribute']}}" name="nameEn" #nameEn="ngModel" required>
+                            <span *ngIf="nameEn.invalid && nameEn.touched">
+                            <span class="help-block" *ngIf="nameEn.errors.required">
+            نام اجباری است.
+                            </span>
+                            <span class="help-block" *ngIf="nameEn.errors.minlength">
+            نام باید حداقل ۲ کاراکتر باشد.
+                            </span>
+                            <span *ngIf="nameEn.errors.server">
+                                <span class="help-block" *ngFor="let err of serverErrorValue['nameEn']['message']">{{err}}</span>
+                            </span>
+                        </span>
+                        </div>
+
+                        <div [ngClass]="{'form-group':true, 'has-error': nameFa.touched && nameFa.invalid   , 'has-success':nameFa.touched && nameFa.valid}" >
+                            <label for="nameFa">نام فارسی</label>
+                            <input type="text" class="form-control" id="nameFa" [(ngModel)]="brand.nameFa" server="{{serverErrorValue['nameFa']['attribute']}}"
+                                   name="nameFa" #nameFa="ngModel">
+                            <span *ngIf="nameFa.invalid && nameFa.touched">
+                            <span class="help-block" *ngIf="nameFa.errors.required">
+                                نام اجباری است.
+                            </span>
+                            <span class="help-block" *ngIf="nameFa.errors.minlength">
+                                نام باید حداقل ۲ کاراکتر باشد.
+                            </span>
+                            <span *ngIf="nameFa.errors.server">
+                                <span class="help-block" *ngFor="let err of serverErrorValue['nameFa']['message']">{{err}}</span>
+                            </span>
+                        </span>
+                        </div>
+
+                        <div
+                                [ngClass]="{'form-group':true, 'has-error': description.touched && description.invalid, 'has-success':description.touched && description.valid}">
+                            <label for="description">توضیحات</label>
+                            <textarea directionDetect class="form-control" id="description" server="{{serverErrorValue['description']['attribute']}}"
+                                      [(ngModel)]="brand.description" name="description" #description="ngModel"></textarea>
+                            <span *ngIf="description.invalid && description.touched">
+                            <span class="help-block" *ngFor="let err of serverErrorValue['description']['message']">{{err}}</span>
+                        </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <div [ngClass]="{'form-group':true}">
+                            <div *ngIf="logoSrc" class="logo-preview">
+                                <img src="{{logoSrc}}" alt="">
+                                <span (click)="deleteLogo()">حذف عکس <i class="fa fa-close"></i>
+                                 <i *ngIf="ajaxDeleteLogo" class="fa fa-refresh fa-spin m-r refresh"></i>
+                                </span>
+                            </div>
+                            <label for="logo">لوگو برند</label>
+                            <input type="file" (change)="fileChange($event)" class="form-control" id="logo" #logo
+                                   name="logo" accept="image/*">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="box box-solid">
+                    <div class="box-body google-box">
+                        <h5>نمایش در گوگل</h5>
+                        <div class="google-links">
+                            <span class="edit" *ngIf="!editSeo" (click)="editSeo = true" ><i class="fa fa-pencil"></i> ویرایش</span>
+                            <div class="title">{{title}}</div>
+                            <div class="url">{{ url }}</div>
+                            <div class="description">{{ metaDescriptionString }}</div>
+                        </div>
+                        <div *ngIf="editSeo">
+                            <div [ngClass]="{'form-group':true, 'has-error': title.dirty && title.invalid, 'has-success':title.touched && title.valid}">
+                                <div class="help">توصیه شده گوگل:حداکثر 70 کارکتر</div>
+                                <label for="title">عنوان</label>
+                                <input type="text"  class="form-control" directionDetect id="title" 
+                                    [(ngModel)]="brand.title"  name="title" #title="ngModel">
+                            </div>
+
+                            <div [ngClass]="{'form-group':true, 'has-error': slug.dirty && slug.invalid, 'has-success':slug.touched && slug.valid}">
+                                <label for="slug">لینک برند</label>
+                                <input directionDetect type="text" class="form-control" id="slug" [(ngModel)]="brand.slug" name="slug" #slug="ngModel"
+                                       server="{{serverErrorValue['slug']['attribute']}}" pattern="[^ \;\/\?\:\@\=\& \<\>\#\%\{\}\|\\\^\~\[\]\`]+">
+                                <span *ngIf="slug.invalid && slug.dirty">
+                                    <span class="help-block" *ngIf="slug.errors.pattern">استفاده از فاصله و برخی کارکترها در لینک غیر مجاز می باشد.
+                                        شما در لینک خود می توانید از این کارکترها استفاده نمایید
+                                        <code>"$" "-" "_" "." "+" "!" "*" "'" "(" ")" ","</code>
+                                    </span>
+                                    <span class="help-block" *ngFor="let err of serverErrorValue['slug']['message']">{{err}}</span>
+                                </span>
+                            </div>
+
+
+                            <div [ngClass]="{'form-group':true, 'has-error': metaDescription.dirty && metaDescription.invalid, 'has-success':metaDescription.touched && metaDescription.valid}">
+                                <div class="help">توصیه شده گوگل:حداکثر 160 کارکتر</div>
+                                <label for="metaDescription">توضیحات</label>
+                                <textarea directionDetect class="form-control" id="metaDescription" [(ngModel)]="brand.metaDescription"
+                                          name="metaDescription" #metaDescription="ngModel"></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="row" *ngIf="firstLoading">
+    <div class="col-md-12">
+        <div class="box box-solid">
+            <div class="box-body">
+                <div class="overlay" [setMinHeight]="150" >
+                    <i class="fa fa-refresh fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

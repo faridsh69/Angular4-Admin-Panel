@@ -1,0 +1,55 @@
+<simple-notifications [options]="options"></simple-notifications>
+
+<div class="product-category">
+    <div *ngIf="categories === null">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-solid">
+                    <div class="box-body">
+                        <div class="overlay" [setMinHeight]="150" >
+                            <i class="fa fa-refresh fa-spin"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="categories !== null">
+
+        <div *ngIf="categories.length === 0 || scenario === 'update'">
+            <div class="modal inside">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="back" *ngIf="categories.length != 0">
+                                <a routerLink="/category"><i class="fa fa-angle-right"></i> بازگشت به دسته بندی ها</a>
+                            </div>
+                            <i class="fa fa-pencil icon"></i>
+                            <h4 *ngIf="categories.length === 0">اولین دسته خود را ایجاد نمایید</h4>
+                            <div *ngIf="scenario === 'update'">
+                                <h4>ویرایش دسته محصولات <b>{{selectedCategory.name}}</b></h4>
+                            </div>
+                            <category-form [categories]="categories"  [category]="selectedCategory" (onUpdateCategories)="updateCategories($event)"></category-form>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!(categories.length === 0 || scenario === 'update')">
+            <div class="row">
+                <div class="col-md-5">
+                    <category-form [categories]="categories"  [category]="selectedCategory" (onUpdateCategories)="updateCategories($event)"></category-form>   
+                </div>
+                <div class="col-md-7">
+                    <div class="box box-solid">
+                        <div class="box-body">
+                            <category-table (onUpdateSelectedCategory)="updateSelectedCategory($event)" [categories]="categories"></category-table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
